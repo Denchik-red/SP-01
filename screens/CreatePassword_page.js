@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native'
 import mainStyles from '../styles/mainStyle.js'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PasswordInputCustom } from '../components/TextInputCustom.js';
+import { PasswordInputCustom } from '../components/TextInputCustom.js'
 import { useState } from 'react'
 import api from '../util/getApi.js'
-import * as apiToken from '../util/apiToken.js';
+import * as apiToken from '../util/apiToken.js'
 
 
 export default function CreatePassword_page({ navigation, route }) {

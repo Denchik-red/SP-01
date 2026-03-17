@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native'
 import mainStyles from '../styles/mainStyle.js'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PasswordInputCustom, EmailInputCustom } from '../components/TextInputCustom.js';
