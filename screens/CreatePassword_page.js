@@ -3,8 +3,12 @@ import mainStyles from '../styles/mainStyle.js'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PasswordInputCustom } from '../components/TextInputCustom.js';
 import { useState } from 'react'
+import api from '../util/getApi.js'
+import * as apiToken from '../util/apiToken.js';
+
 
 export default function CreatePassword_page({ navigation, route }) {
+
     const { name, surname, patronymic, birthdayDate, gender, email } = route.params;
 
     const [password, setPassword] = useState("")
@@ -15,41 +19,57 @@ export default function CreatePassword_page({ navigation, route }) {
 
     const [apiError, setApiError] = useState("")
 
+    async function updateUserProfile({ first_name, last_name, patronymic, birthday, gender }, userId) {
+        const updateProfileRes = await api.patch(`/collections/users/records/${userId}`, {
+            first_name,
+            last_name,
+            patronymic,
+            birthday,
+            gender
+        })
+        return updateProfileRes
+    }
+
     const onRegisterPressed = async () => {
-        setApiError(""); // Сбрасываем предыдущие ошибки
-        if (passwordValid && confirmPasswordValid) {
-            console.log("Form is valid, attempting to register...");
+        setApiError("")
+        if (passwordValid && confirmPasswordValid && email) {
+            console.log("Form is valid, attempting to register...")
 
             try {
-                const res = await fetch("http://2.nntc.nnov.ru:8900/api/collections/users/records", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        passwordConfirm: confirmPassword,
-                    }),
+                const res = await api.post("/collections/users/records", {
+                    email: email,
+                    password: password,
+                    passwordConfirm: confirmPassword
                 })
-                const data = await res.json()
+                console.log(res)
 
-                if (res.ok) {
-                    console.log("Registration successful!", data);
-                    navigation.navigate('Login');
-                } else {
-                    console.error("Registration failed with status:", res.status, data);
-                    // Предполагаем, что сервер возвращает ошибку в поле 'message' или в data.data.<field>.message
-                    const errorMessage = data.message || "Произошла ошибка. Попробуйте снова.";
-                    setApiError(errorMessage);
+                const authRes = await api.post("/collections/users/auth-with-password", {
+                    identity: email,
+                    password: password,
+                })
+                console.log(authRes)
+                if (authRes.data?.token) {
+                    apiToken.saveToken(authRes.data.token)
+                    const updateProfileRes = await api.patch(`/collections/users/records/${res.data.id}`, {
+                        first_name: name,
+                        last_name: surname,
+                        patronymic: patronymic,
+                        birthday: parceDate(birthdayDate),
+                        gender: gender
+                    })
+                    console.log(updateProfileRes.data)
                 }
-            } catch (e) {
-                console.error("Registration error:", e);
-                setApiError("Не удалось подключиться к серверу.");
-            }
 
+            } catch (error) {
+                console.log(error.response.data)
+                if (error.response.data.data.email.message == "Value must be unique.") {
+                    setApiError("Пользователь с таким email уже существует.")
+                } else {
+                    setApiError("Не удалось подключиться к серверу.")
+                }
+            }
         } else {
-            console.log("Login failed. Please check your credentials.");
+            console.log("Login failed. Please check your credentials.")
         }
     }
 
@@ -146,3 +166,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
+
+function parceDate(date) {
+    const dateList = date.split('.')
+    return `${dateList[2]}-${dateList[1]}-${dateList[0]}`
+}

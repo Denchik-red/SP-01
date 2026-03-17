@@ -12,7 +12,7 @@ export default function App() {
     return (
         <SafeAreaProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName='CreatePassword' screenOptions={{ headerShown: false }}>
+                <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="Login" component={Login_page} />
                     <Stack.Screen name="Registration" component={CreateProfile_page} />
                     <Stack.Screen name="CreatePassword" component={CreatePassword_page} />
