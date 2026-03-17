@@ -75,63 +75,65 @@ export default function CreatePassword_page({ navigation, route }) {
 
     return (
         <SafeAreaView style={{ ...mainStyles.container, paddingTop: 103 }}>
-            <View
-                style={{
-                    alignItems: 'center',
-                    width: '100%',
-                    gap: 23,
-                }}>
-                <Text style={mainStyles.title}>Создание пароля</Text>
-                <Text style={mainStyles.subtitle}>Введите пароль</Text>
-            </View>
-            <View
-                style={{
-                    width: '100%',
-                    paddingHorizontal: 20,
-                    paddingTop: 20,
-                }}
-            >
-                <View>
-                    <Text
-                        style={{
-                            color: "#7E7E9A",
-                            paddingBottom: 4,
-                        }}
-                    >Пароль</Text>
-                    <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+            <ScrollView>
+                <View
+                    style={{
+                        alignItems: 'center',
+                        width: '100%',
+                        gap: 23,
+                    }}>
+                    <Text style={mainStyles.title}>Создание пароля</Text>
+                    <Text style={mainStyles.subtitle}>Введите пароль</Text>
                 </View>
+                <View
+                    style={{
+                        width: '100%',
+                        paddingHorizontal: 20,
+                        paddingTop: 20,
+                    }}
+                >
+                    <View>
+                        <Text
+                            style={{
+                                color: "#7E7E9A",
+                                paddingBottom: 4,
+                            }}
+                        >Пароль</Text>
+                        <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+                    </View>
 
-                <View>
-                    <Text
-                        style={{
-                            color: "#7E7E9A",
-                            paddingBottom: 4,
-                        }}
-                    >Повторите пароль</Text>
-                    <PasswordInputCustom value={confirmPassword} onChangeText={setConfirmPassword} setIsPasswordValid={setConfirmPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+                    <View>
+                        <Text
+                            style={{
+                                color: "#7E7E9A",
+                                paddingBottom: 4,
+                            }}
+                        >Повторите пароль</Text>
+                        <PasswordInputCustom value={confirmPassword} onChangeText={setConfirmPassword} setIsPasswordValid={setConfirmPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+                    </View>
+                    {apiError ? (
+                        <Text
+                            style={{
+                                color: "red",
+                                textAlign: "center",
+                                marginTop: 10,
+                            }}>{apiError}</Text>
+                    ) : null}
+
                 </View>
-                {apiError ? (
-                    <Text
-                        style={{
-                            color: "red",
-                            textAlign: "center",
-                            marginTop: 10,
-                        }}>{apiError}</Text>
-                ) : null}
-
-            </View>
-            <View style={styles.buttonContainer}>
-                <Pressable
-                    onPress={onRegisterPressed}
-                    disabled={!(confirmPasswordValid && passwordValid && password === confirmPassword)}
-                    style={({ pressed }) => [
-                        styles.button,
-                        (confirmPasswordValid && passwordValid && password === confirmPassword) ? styles.buttonActive : styles.buttonDisabled,
-                        pressed && styles.buttonPressed,
-                    ]}>
-                    <Text style={styles.buttonText}>Зарегистрироваться</Text>
-                </Pressable>
-            </View>
+                <View style={styles.buttonContainer}>
+                    <Pressable
+                        onPress={onRegisterPressed}
+                        disabled={!(confirmPasswordValid && passwordValid && password === confirmPassword)}
+                        style={({ pressed }) => [
+                            styles.button,
+                            (confirmPasswordValid && passwordValid && password === confirmPassword) ? styles.buttonActive : styles.buttonDisabled,
+                            pressed && styles.buttonPressed,
+                        ]}>
+                        <Text style={styles.buttonText}>Зарегистрироваться</Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }

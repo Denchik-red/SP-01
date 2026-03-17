@@ -48,64 +48,66 @@ export default function Login_page({ navigation }) {
 
     return (
         <SafeAreaView style={{ ...mainStyles.container, paddingTop: 103 }}>
-            <View
-                style={{
-                    alignItems: 'center',
-                    width: '100%',
-                    gap: 23,
-                }}>
-                <Text style={mainStyles.title}>Добро пожаловать!</Text>
-                <Text style={mainStyles.subtitle}>Войдите, чтобы пользоваться функциями приложения</Text>
-            </View>
-            <View
-                style={{
-                    width: '100%',
-                    paddingHorizontal: 20,
-                    paddingTop: 20,
-                }}
-            >
-                <View>
-                    <Text
-                        style={{
-                            color: "#7E7E9A",
-                            paddingBottom: 4,
-                        }}
-                    >Вход по E-mail</Text>
-                    <EmailInputCustom value={email} onChangeText={setEmail} setIsEmailValid={setEmailValid}></EmailInputCustom>
+            <ScrollView>
+                <View
+                    style={{
+                        alignItems: 'center',
+                        width: '100%',
+                        gap: 23,
+                    }}>
+                    <Text style={mainStyles.title}>Добро пожаловать!</Text>
+                    <Text style={mainStyles.subtitle}>Войдите, чтобы пользоваться функциями приложения</Text>
                 </View>
-
-                <View>
-                    <Text
-                        style={{
-                            color: "#7E7E9A",
-                            paddingBottom: 4,
-                        }}
-                    >Пароль</Text>
-                    <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid}></PasswordInputCustom>
-                </View>
-
-            </View>
-            <View style={styles.buttonContainer}>
-                <Pressable
-                    onPress={onLoginPressed}
-                    disabled={!(emailValid && passwordValid)}
-                    style={({ pressed }) => [
-                        styles.button,
-                        (emailValid && passwordValid) ? styles.buttonActive : styles.buttonDisabled,
-                        pressed && styles.buttonPressed,
-                    ]}>
-                    <Text style={styles.buttonText}>Далее</Text>
-                </Pressable>
-                <Pressable
-                    onPress={() => navigation.navigate('Registration')}
+                <View
+                    style={{
+                        width: '100%',
+                        paddingHorizontal: 20,
+                        paddingTop: 20,
+                    }}
                 >
-                    <Text
-                        style={{
-                            color: "#2074F2",
-                            fontSize: 16,
-                        }}>Зарегистрироваться</Text>
-                </Pressable>
-            </View>
+                    <View>
+                        <Text
+                            style={{
+                                color: "#7E7E9A",
+                                paddingBottom: 4,
+                            }}
+                        >Вход по E-mail</Text>
+                        <EmailInputCustom value={email} onChangeText={setEmail} setIsEmailValid={setEmailValid}></EmailInputCustom>
+                    </View>
+
+                    <View>
+                        <Text
+                            style={{
+                                color: "#7E7E9A",
+                                paddingBottom: 4,
+                            }}
+                        >Пароль</Text>
+                        <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid}></PasswordInputCustom>
+                    </View>
+
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Pressable
+                        onPress={onLoginPressed}
+                        disabled={!(emailValid && passwordValid)}
+                        style={({ pressed }) => [
+                            styles.button,
+                            (emailValid && passwordValid) ? styles.buttonActive : styles.buttonDisabled,
+                            pressed && styles.buttonPressed,
+                        ]}>
+                        <Text style={styles.buttonText}>Далее</Text>
+                    </Pressable>
+                    <Pressable
+                        onPress={() => navigation.navigate('Registration')}
+                    >
+                        <Text
+                            style={{
+                                color: "#2074F2",
+                                fontSize: 16,
+                            }}>Зарегистрироваться</Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }
