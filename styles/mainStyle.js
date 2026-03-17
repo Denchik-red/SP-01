@@ -12,12 +12,14 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 10,
+        paddingHorizontal: 20,
+        textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
         color: '#666',
-        textAlign: 'center',
-        marginBottom: 20,
+        textAlign: 'start',
+        paddingHorizontal: 20,
     },
     button: {
         width: '80%',

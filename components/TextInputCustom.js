@@ -1,6 +1,6 @@
-import { TextInput, View, Pressable, Text, StyleSheet } from 'react-native'
+import { TextInput, View, Pressable, Text, StyleSheet, Modal } from 'react-native'
 import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react-native'
+import { Eye, EyeOff, ChevronDown } from 'lucide-react-native'
 import mainStyles from '../styles/mainStyle.js';
 
 
@@ -14,8 +14,8 @@ export function PasswordInputCustom({ value, onChangeText, setIsPasswordValid, c
         let clearValue = newValue.trim()
         onChangeText(clearValue)
 
-        if (clearValue.length < 3 || clearValue.length > 20) {
-            setPasswordErrorText(clearValue == "" ? "" : "Пароль должен содержать от 3 до 20 символов")
+        if (clearValue.length < 8 || clearValue.length > 20) {
+            setPasswordErrorText(clearValue == "" ? "" : "Пароль должен содержать от 8 до 20 символов")
             setIsPasswordValid(false)
         } else {
             setPasswordErrorText("")
@@ -114,6 +114,159 @@ export function EmailInputCustom({ value, onChangeText, setIsEmailValid, customE
 
 }
 
+export function TextInputCustom({ value, onChangeText, customError = "", placeholder = ""}) {
+
+    function onTextInput(newValue) {
+        let clearValue = newValue.trim()
+        onChangeText(clearValue)
+    }
+
+    return (
+        <View
+            style={{
+                display: "relative",
+                width: '100%',
+            }}
+        >
+            <TextInput
+                placeholder={placeholder}
+                keyboardType="default"
+                autoCapitalize="none"
+                value={value}
+                onChangeText={onTextInput}
+                style={styles.input} 
+                
+                />
+            <View 
+                style={{
+                    minHeight: 20,
+                }}
+            >
+                <Text
+                    style={{
+                        color: "red"
+                    }}
+                >{customError}</Text>
+            </View>
+        </View>
+    )
+}
+
+export function DateInputCustom({ value, onChangeText, setIsDateValid, customError = "", placeholder = ""}) {
+    const [dateError, setDateError] = useState("");
+
+    const handleDateChange = (text) => {
+        const cleaned = text.replace(/[^\d]/g, '');
+        const length = cleaned.length;
+        let formattedText = cleaned;
+        if (length > 2) {
+            formattedText = `${cleaned.slice(0, 2)}.${cleaned.slice(2)}`;
+        }
+        if (length > 4) {
+            formattedText = `${cleaned.slice(0, 2)}.${cleaned.slice(2, 4)}.${cleaned.slice(4, 8)}`;
+        }
+
+        onChangeText(formattedText);
+
+        if (formattedText.length === 10) {
+            const parts = formattedText.split('.');
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+            const date = new Date(year, month - 1, day);
+
+            if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
+                setDateError("");
+                setIsDateValid(true);
+            } else {
+                setDateError("Введите корректную дату");
+                setIsDateValid(false);
+            }
+        } else {
+            setDateError(text ? "Дата должна быть в формате ДД.ММ.ГГГГ" : "");
+            setIsDateValid(false);
+        }
+    }
+
+    return (
+        <View
+            style={{
+                display: "relative",
+                width: '100%',
+            }}
+        >
+            <TextInput
+                placeholder={placeholder}
+                keyboardType="numeric"
+                autoCapitalize="none"
+                value={value}
+                onChangeText={handleDateChange}
+                style={styles.input}
+                
+                />
+            <View 
+                style={{
+                    minHeight: 20,
+                }}
+            >
+                <Text
+                    style={{
+                        color: "red"
+                    }}
+                >{dateError || customError}</Text>
+            </View>
+        </View>
+    )
+}
+
+export function GenderPickerCustom({ value, onValueChange, customError = "", setGenderValid}) {
+    const [modalVisible, setModalVisible] = useState(false);
+    const options = ["Мужской", "Женский"];
+
+    const handleSelect = (option) => {
+        onValueChange(option);
+        setModalVisible(false);
+        setGenderValid(true)
+    };
+
+    return (
+        <View style={{ width: '100%' }}>
+            <Pressable onPress={() => setModalVisible(true)} style={styles.input}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ paddingTop: 16, fontSize: 16, color: value ? '#000' : '#7E7E9A' }}>{value || "Пол"}</Text>
+                    <ChevronDown size={20} color="#a1a1aa" style={{ paddingTop: 15 }} />
+                </View>
+            </Pressable>
+            <Modal
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+                    <View style={styles.modalContent}>
+                        {options.map((option, index) => (
+                            <Pressable key={index} style={styles.option} onPress={() => handleSelect(option)}>
+                                <Text style={{ fontSize: 18 }}>{option}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
+                </Pressable>
+            </Modal>
+            <View
+                style={{
+                    minHeight: 20,
+                }}
+            >
+                <Text
+                    style={{
+                        color: "red"
+                    }}
+                >{customError}</Text>
+            </View>
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     input: {
         width: '100%',
@@ -128,5 +281,30 @@ const styles = StyleSheet.create({
         placeholderTextColor: "#7E7E9A",
 
     },
-
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: 10,
+        width: '80%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    option: {
+        paddingVertical: 15,
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
 });
