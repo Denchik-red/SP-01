@@ -8,18 +8,98 @@ import CreatePassword_page from './screens/CreatePassword_page';
 import InterAccessPassword_page from './screens/InterAccessPassword._page';
 import CreateAccessPassword_page from './screens/CreateAccessPassword_page';
 import Profile_page from './screens/Profile_page';
+import Main_page from './screens/Main_page';
+import Catalog_page from './screens/Catalog_page';
+import Projects_page from './screens/Projects_page';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Image } from 'react-native';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainTab() {
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false }}>
+            <Tab.Screen
+                name="Main"
+                component={Main_page}
+                options={{
+                    tabBarLabel: 'Главная',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <Image
+                                source={require('./assets/home.png')}
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    tintColor: focused ? '#007BFF' : '#999'
+                                }}
+                                resizeMode="contain"
+                            />
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="Catalog"
+                component={Catalog_page}
+                options={{
+                    tabBarLabel: 'Каталог',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <Image
+                                source={require('./assets/catalog.png')}
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    tintColor: focused ? '#007BFF' : '#999'
+                                }}
+                                resizeMode="contain"
+                            />
+                        )
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="Projects"
+                component={Projects_page}
+                options={{
+                    tabBarLabel: 'Проекты',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <Image
+                                source={require('./assets/projects.png')}
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    tintColor: focused ? '#007BFF' : '#999'
+                                }}
+                                resizeMode="contain"
+                            />
+                        )
+                    }
+                }}
+            />
             <Tab.Screen
                 name="Profile"
                 component={Profile_page}
-                options={{ tabBarLabel: 'Профиль' }}
+                options={{
+                    tabBarLabel: 'Профиль',
+                    tabBarIcon: ({ focused, color, size }) => {
+                        return (
+                            <Image
+                                source={require('./assets/profile.png')}
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    tintColor: focused ? '#007BFF' : '#999'
+                                }}
+                                resizeMode="contain"
+                            />
+                        )
+                    }
+                }}
             />
         </Tab.Navigator>
     )
@@ -27,7 +107,7 @@ function MainTab() {
 
 function AuthStack() {
     return (
-        <Stack.Navigator initialRouteName='CreateAccessPassword' screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Profile" component={Profile_page} options={{ headerShown: true }} />
             <Stack.Screen name="Login" component={Login_page} />
             <Stack.Screen name="Registration" component={CreateProfile_page} />
@@ -60,7 +140,7 @@ export default function App() {
     return (
         <SafeAreaProvider>
             <AuthProvider>
-                <AppNavigator/>
+                <AppNavigator />
             </AuthProvider>
         </SafeAreaProvider>
     );
