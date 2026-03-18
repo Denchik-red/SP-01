@@ -1,13 +1,34 @@
 import { SafeAreaView } from "react-native-safe-area-context"
-import { ScrollView, View, Text, Pressable } from "react-native"
+import { ScrollView, View, Text, Pressable, Platform } from "react-native"
 import mainStyles from "../styles/mainStyle.js"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import CircleButton from "../components/CircleButton.js"
+import * as SecureStore from 'expo-secure-store';
 
 
-export default function InterAccessPassword_page() {
+export default function InterAccessPassword_page({navigation}) {
 
-    const insertPasswordCount = 0
-    const [code, setCode] = useState(["", "", "", ""])
+    const [code, setCode] = useState([])
+
+    useEffect(() => {
+        const checkPin = async () => {
+            if (code.length === 4) {
+                const pin = code.join('');
+                console.log("Введенный пин-код:", pin);
+                if (Platform.OS == "android") {
+                    console.log(await SecureStore.getItemAsync("pin"))
+                    if (pin === await SecureStore.getItemAsync("pin")) {
+                        console.log("Pin is correct!")
+                        navigation.navigate("Profile")
+                    } else {
+                        console.log("Pin is incorrect!")
+                        setCode([])
+                    }
+                }
+            }
+        }
+        checkPin();
+    }, [code]);
 
     return (
         <SafeAreaView>
@@ -32,53 +53,36 @@ export default function InterAccessPassword_page() {
                         paddingTop: 20,
                     }}
                 >
-                    {code.map((item, index) => {
-                        return (
+                    {
+                        [...Array(4)].map((_, index) => (
                             <View
-                             key={`input-${index}`}
+                                key={index}
                                 style={{
-                                    width: 20,
-                                    height: 20,
-                                    backgroundColor: item == "" ? "#F2F2F2" : "#1A6FEE",
+                                    width: 15,
+                                    height: 15,
                                     borderRadius: 10,
-                                    borderColor: "#1A6FEE",
-                                    borderWidth: 1,
+                                    backgroundColor: code[index] !== undefined ? "#007BFF" : "#D9D9D9",
                                 }}
-                            ></View>
-                        )
-                    })}
+                            />
+                        ))
+                    }
+
                 </View>
-                <View>
+                <View style={{
+                    justifyContent: "center",
+                    alignItems: 'center',
+                    paddingTop: 200,
+                    padding: 60,
+                    gap: 20,
+
+                }}>
                     {
                         [[1, 2, 3], [4, 5, 6], [7, 8, 9], ["", 0, "<"]].map((row, rowIndex) => {
                             return (
-                                <View key={`inputRow-${rowIndex}`} style={{flexDirection:"row"}}>
+                                <View key={`inputRow-${rowIndex}`} style={{ flexDirection: "row", gap: 20 }}>
                                     {
                                         row.map((button, buttonIndex) => {
-                                            return (
-                                                <Pressable
-                                                    key={`InputButton-${rowIndex}-${buttonIndex}`}
-                                                    onPress={() => { }}
-                                                    style={{
-                                                        width: 60,
-                                                        height: 60,
-                                                        margin: 5,
-                                                        backgroundColor: '#fff',
-                                                        borderRadius: 30,
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
-                                                        shadowColor: "#000",
-                                                        shadowOffset: { width: 0, height: 2 },
-                                                        shadowOpacity: 0.25,
-                                                        shadowRadius: 3.84,
-                                                        elevation: 5,
-                                                    }}
-                                                >
-                                                    <Text>
-                                                        {button}
-                                                    </Text>
-                                                </Pressable>
-                                            )
+                                            return <CircleButton key={`InputButton-${rowIndex}-${buttonIndex}`} button={button} buttonIndex={buttonIndex} rowIndex={rowIndex} setCode={setCode}></CircleButton>
                                         })
                                     }
                                 </View>
