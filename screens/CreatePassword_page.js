@@ -32,7 +32,7 @@ export default function CreatePassword_page({ navigation, route }) {
 
     const onRegisterPressed = async () => {
         setApiError("")
-        if (passwordValid && confirmPasswordValid && email) {
+        if (passwordValid && confirmPasswordValid && email && apiError === "") {
             console.log("Form is valid, attempting to register...")
 
             try {
@@ -58,6 +58,7 @@ export default function CreatePassword_page({ navigation, route }) {
                         gender: gender
                     })
                     console.log(updateProfileRes.data)
+                    navigation.navigate("CreateAccessPassword")
                 }
 
             } catch (error) {
@@ -75,65 +76,77 @@ export default function CreatePassword_page({ navigation, route }) {
 
     return (
         <SafeAreaView style={{ ...mainStyles.container, paddingTop: 103 }}>
-            <ScrollView>
-                <View
-                    style={{
-                        alignItems: 'center',
-                        width: '100%',
-                        gap: 23,
-                    }}>
-                    <Text style={mainStyles.title}>Создание пароля</Text>
-                    <Text style={mainStyles.subtitle}>Введите пароль</Text>
-                </View>
-                <View
-                    style={{
-                        width: '100%',
-                        paddingHorizontal: 20,
-                        paddingTop: 20,
-                    }}
-                >
-                    <View>
-                        <Text
-                            style={{
-                                color: "#7E7E9A",
-                                paddingBottom: 4,
-                            }}
-                        >Пароль</Text>
-                        <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
-                    </View>
-
-                    <View>
-                        <Text
-                            style={{
-                                color: "#7E7E9A",
-                                paddingBottom: 4,
-                            }}
-                        >Повторите пароль</Text>
-                        <PasswordInputCustom value={confirmPassword} onChangeText={setConfirmPassword} setIsPasswordValid={setConfirmPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
-                    </View>
-                    {apiError ? (
-                        <Text
-                            style={{
-                                color: "red",
-                                textAlign: "center",
-                                marginTop: 10,
-                            }}>{apiError}</Text>
-                    ) : null}
-
-                </View>
-                <View style={styles.buttonContainer}>
-                    <Pressable
-                        onPress={onRegisterPressed}
-                        disabled={!(confirmPasswordValid && passwordValid && password === confirmPassword)}
-                        style={({ pressed }) => [
-                            styles.button,
-                            (confirmPasswordValid && passwordValid && password === confirmPassword) ? styles.buttonActive : styles.buttonDisabled,
-                            pressed && styles.buttonPressed,
-                        ]}>
-                        <Text style={styles.buttonText}>Зарегистрироваться</Text>
+            <View style={{
+                width: '100%'
+            }}>
+                <ScrollView>
+                    <Pressable>
+                        <Text style={mainStyles.backButton}
+                            onPress={() => navigation.goBack()}
+                        >
+                            Назад
+                        </Text>
+                        
                     </Pressable>
-                </View>
-            </ScrollView>
+                    <View
+                        style={{
+                            alignItems: 'center',
+                            width: '100%',
+                            gap: 23,
+                        }}>
+                        <Text style={mainStyles.title}>Создание пароля</Text>
+                        <Text style={mainStyles.subtitle}>Введите пароль</Text>
+                    </View>
+                    <View
+                        style={{
+                            width: '100%',
+                            paddingHorizontal: 20,
+                            paddingTop: 20,
+                        }}
+                    >
+                        <View>
+                            <Text
+                                style={{
+                                    color: "#7E7E9A",
+                                    paddingBottom: 4,
+                                }}
+                            >Пароль</Text>
+                            <PasswordInputCustom value={password} onChangeText={setPassword} setIsPasswordValid={setPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+                        </View>
+
+                        <View>
+                            <Text
+                                style={{
+                                    color: "#7E7E9A",
+                                    paddingBottom: 4,
+                                }}
+                            >Повторите пароль</Text>
+                            <PasswordInputCustom value={confirmPassword} onChangeText={setConfirmPassword} setIsPasswordValid={setConfirmPasswordValid} customError={password !== confirmPassword ? "Пароли не совпадают" : ""}></PasswordInputCustom>
+                        </View>
+                        {apiError ? (
+                            <Text
+                                style={{
+                                    color: "red",
+                                    textAlign: "center",
+                                    marginTop: 10,
+                                }}>{apiError}</Text>
+                        ) : null}
+
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <Pressable
+                            onPress={onRegisterPressed}
+                            disabled={!(confirmPasswordValid && passwordValid && password === confirmPassword && apiError === "")}
+                            style={({ pressed }) => [
+                                styles.button,
+                                (confirmPasswordValid && passwordValid && password === confirmPassword) ? styles.buttonActive : styles.buttonDisabled,
+                                pressed && styles.buttonPressed,
+                            ]}>
+                            <Text style={styles.buttonText}>Зарегистрироваться</Text>
+                        </Pressable>
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }

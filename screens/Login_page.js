@@ -36,6 +36,7 @@ export default function Login_page({ navigation }) {
                 console.log(res)
                 if (res.data?.token) {
                     apiToken.saveToken(res.data.token)
+                    navigation.navigate("InterAccessPassword")
                 }
             } catch (e) {
                 console.error("Login error:", e);

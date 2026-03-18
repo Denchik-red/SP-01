@@ -40,5 +40,12 @@ export default StyleSheet.create({
         fontSize: 16,
         textDecorationLine: 'underline',
     
+    },
+    backButton: {
+        fontSize: 16,
+        color: "#2074F2",
+        paddingLeft: 20,
+        paddingBottom: 20,
     }
+    
 })
