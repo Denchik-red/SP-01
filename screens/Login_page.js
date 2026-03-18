@@ -7,9 +7,7 @@ import api from '../util/getApi.js';
 import * as apiToken from '../util/apiToken.js';
 
 
-
 export default function Login_page({ navigation }) {
-
     const [password, setPassword] = useState("")
     const [passwordValid, setPasswordValid] = useState(false)
 
@@ -19,6 +17,9 @@ export default function Login_page({ navigation }) {
     useEffect(() => {
         const checkToken = async () => {
             const token = await apiToken.getToken();
+            if (token) {
+                navigation.navigate("InterAccessPassword")
+            }
         }
         checkToken()
     }, []);

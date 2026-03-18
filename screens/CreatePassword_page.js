@@ -19,17 +19,6 @@ export default function CreatePassword_page({ navigation, route }) {
 
     const [apiError, setApiError] = useState("")
 
-    async function updateUserProfile({ first_name, last_name, patronymic, birthday, gender }, userId) {
-        const updateProfileRes = await api.patch(`/collections/users/records/${userId}`, {
-            first_name,
-            last_name,
-            patronymic,
-            birthday,
-            gender
-        })
-        return updateProfileRes
-    }
-
     const onRegisterPressed = async () => {
         setApiError("")
         if (passwordValid && confirmPasswordValid && email && apiError === "") {

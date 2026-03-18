@@ -1,0 +1,43 @@
+npx create-expo-app my-app --template blank@54
+
+npx expo install react-native-web react-dom
+
+
+Router:
+npx expo install @react-navigation/native
+npx expo install @react-navigation/native-stack
+npx expo install react-native-screens
+
+export ANDROID_HOME=/home/denis/Android/Sdk
+
+nativeWind:
+npm install nativewind@preview react-native-css react-native-reanimated react-native-safe-area-context
+npm install --dev tailwindcss @tailwindcss/postcss postcss
+
+postcss.config.mjs:
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+global.css:
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+ 
+@import "nativewind/theme";
+
+npx expo customize metro.config.js
+metro.config.js:
+// Learn more https://docs.expo.io/guides/customizing-metro
+const { getDefaultConfig } = require('expo/metro-config');
+const { withNativewind } = require("nativewind/metro");
+
+/** @type {import('expo/metro-config').MetroConfig} */
+const config = getDefaultConfig(__dirname);
+
+module.exports = withNativewind(config);
+
+в App.js:
+import "./global.css"

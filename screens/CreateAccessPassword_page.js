@@ -1,20 +1,28 @@
 import { SafeAreaView } from "react-native-safe-area-context"
-import { ScrollView, View, Text, Pressable, Platform } from "react-native"
+import { Animated, View, Text, Pressable, Platform } from "react-native"
 import mainStyles from "../styles/mainStyle.js"
-import { useState, useEffect, use } from "react"
+import { useState, useEffect, useRef } from "react"
 import CircleButton from "../components/CircleButton.js"
 import * as SecureStore from 'expo-secure-store';
-
+import { useAuth } from '../contexts/AuthContext.js'
 
 export default function CreateAccessPassword_page({ navigation }) {
 
+    const { setIsAuthorized } = useAuth()
     const [code, setCode] = useState([])
     const [firstPassword, setFirstpassword] = useState("")
     const [error, setError] = useState(false)
 
+    const shakeAnim = useRef(new Animated.Value(0)).current;
+    console.log("shakeAnim: ", typeof(shakeAnim))
 
     useEffect(() => {
         if (error) {
+            Animated.sequence([
+                Animated.timing(shakeAnim, { toValue: 10, duration: 80, useNativeDriver: true, }),
+                Animated.timing(shakeAnim, { toValue: -10, duration: 80, useNativeDriver: true, }),
+                Animated.timing(shakeAnim, { toValue: 0, duration: 80, useNativeDriver: true, })
+            ]).start()
             setTimeout(() => {
                 setError(false)
             }, 1000)
@@ -39,7 +47,7 @@ export default function CreateAccessPassword_page({ navigation }) {
                 } else {
                     if (Platform.OS === "android") {
                         SecureStore.setItemAsync("pin", pin);
-                        navigation.navigate("Profile")
+                        setIsAuthorized(true)
                     }
                 }
             }
@@ -59,7 +67,7 @@ export default function CreateAccessPassword_page({ navigation }) {
                 <Text style={mainStyles.title}>{firstPassword == "" ? "Создайте пароль" : "Введите пароль еще раз"}</Text>
                 <Text style={mainStyles.subtitle}>Для защиты ваших персональных данных</Text>
             </View>
-            <View
+            <Animated.View
                 style={{
                     width: '100%',
                     justifyContent: 'center',
@@ -67,6 +75,9 @@ export default function CreateAccessPassword_page({ navigation }) {
                     flexDirection: "row",
                     gap: 10,
                     paddingTop: 20,
+                    transform: [{
+                        translateX: shakeAnim
+                    }]
                 }}
             >
                 {
@@ -86,7 +97,7 @@ export default function CreateAccessPassword_page({ navigation }) {
                     ))
                 }
 
-            </View>
+            </Animated.View>
             <View style={{
                 justifyContent: "center",
                 alignItems: 'center',
