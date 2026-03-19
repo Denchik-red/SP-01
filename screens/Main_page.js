@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, ScrollView, Image, Pressable } from 'react-native'
+import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList } from 'react-native'
 import { SearchBar } from '../components/TextInputCustom'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
@@ -54,7 +54,7 @@ export default function Main_page() {
         setFilteredProducts(filteredProducts)
     }, [serchText, genderFilter, products])
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={{
                 margin: 10,
             }}>
@@ -63,6 +63,7 @@ export default function Main_page() {
             </View>
             <Text style={{ ...mainStyle.subtitle, paddingTop: 30 }}>Акции и новости</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{
+                height: 300,
             }}
             >
                 {isStocksLoading ? <ActivityIndicator /> :
@@ -157,21 +158,19 @@ export default function Main_page() {
                 </Pressable>
             </View>
 
-            <ScrollView style={{
-                marginBottom: 50,
-            }}>
-                {filteredProducts.map((product) => {
-                    return (
-                        <ProductCard
-                            key={product.id}
-                            title={product.title}
-                            category={product.typeCloses}
-                            price={product.price}
-                            onAdd={() => {}}
-                        />
-                    )
-                })}
-            </ScrollView>
+            <FlatList
+                data={filteredProducts}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <ProductCard
+                        title={item.title}
+                        category={item.typeCloses}
+                        price={item.price}
+                        onAdd={() => { }}
+                    />
+                )}
+                contentContainerStyle={{ minHeight: '100%' }}
+            />
 
         </SafeAreaView>
     )
