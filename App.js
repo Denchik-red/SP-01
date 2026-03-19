@@ -20,7 +20,7 @@ const Tab = createBottomTabNavigator();
 
 function MainTab() {
     return (
-        <Tab.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false }}>
+        <Tab.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30} }}>
             <Tab.Screen
                 name="Main"
                 component={Main_page}
@@ -31,8 +31,8 @@ function MainTab() {
                             <Image
                                 source={require('./assets/home.png')}
                                 style={{
-                                    width: size,
-                                    height: size,
+                                    width: 35,
+                                    height: 35,
                                     tintColor: focused ? '#007BFF' : '#999'
                                 }}
                                 resizeMode="contain"
@@ -51,8 +51,8 @@ function MainTab() {
                             <Image
                                 source={require('./assets/catalog.png')}
                                 style={{
-                                    width: size,
-                                    height: size,
+                                    width: 35,
+                                    height: 35,
                                     tintColor: focused ? '#007BFF' : '#999'
                                 }}
                                 resizeMode="contain"
@@ -71,8 +71,8 @@ function MainTab() {
                             <Image
                                 source={require('./assets/projects.png')}
                                 style={{
-                                    width: size,
-                                    height: size,
+                                    width: 26,
+                                    height: 26,
                                     tintColor: focused ? '#007BFF' : '#999'
                                 }}
                                 resizeMode="contain"
@@ -91,8 +91,8 @@ function MainTab() {
                             <Image
                                 source={require('./assets/profile.png')}
                                 style={{
-                                    width: size,
-                                    height: size,
+                                    width: 35,
+                                    height: 35,
                                     tintColor: focused ? '#007BFF' : '#999'
                                 }}
                                 resizeMode="contain"
