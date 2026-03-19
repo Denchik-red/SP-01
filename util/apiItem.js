@@ -50,5 +50,12 @@ export async function getItem(key) {
         console.error("Error getting token:", e);
         return null;
     }
-   
+}
+
+export async function removeItem(key) {
+    if (Platform.OS === "web") {
+        Cookies.remove(key);
+    } else {
+        await SecureStore.deleteItemAsync(key);
+    }
 }
