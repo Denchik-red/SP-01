@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { PasswordInputCustom, EmailInputCustom } from '../components/TextInputCustom.js';
 import { useState, useEffect } from 'react'
 import api from '../util/getApi.js';
-import * as apiToken from '../util/apiToken.js';
+import * as apiItem from '../util/apiItem.js';
 
 
 export default function Login_page({ navigation }) {
@@ -16,8 +16,9 @@ export default function Login_page({ navigation }) {
 
     useEffect(() => {
         const checkToken = async () => {
-            const token = await apiToken.getToken();
-            if (token) {
+            const token = await apiItem.getItem('token')
+            const userId = await apiItem.getItem("userId")
+            if (token && userId) {
                 navigation.navigate("InterAccessPassword")
             }
         }
@@ -35,8 +36,10 @@ export default function Login_page({ navigation }) {
                     password: password,
                 })
                 console.log(res)
-                if (res.data?.token) {
-                    apiToken.saveToken(res.data.token)
+                if (res.data?.token && res.data?.record.id) {
+                    apiItem.saveItem('token', res.data.token)
+                    apiItem.saveItem('userId', res.data.record.id)
+                    console.log('userId: ', res.data?.record.id)
                     navigation.navigate("InterAccessPassword")
                 }
             } catch (e) {

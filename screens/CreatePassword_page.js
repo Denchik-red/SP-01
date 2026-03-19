@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { PasswordInputCustom } from '../components/TextInputCustom.js'
 import { useState } from 'react'
 import api from '../util/getApi.js'
-import * as apiToken from '../util/apiToken.js'
+import * as apiItem from '../util/apiItem.js'
 
 
 export default function CreatePassword_page({ navigation, route }) {
@@ -38,7 +38,8 @@ export default function CreatePassword_page({ navigation, route }) {
                 })
                 console.log(authRes)
                 if (authRes.data?.token) {
-                    apiToken.saveToken(authRes.data.token)
+                    apiItem.saveItem('userId', res.data.record.id)
+                    apiItem.saveItem('token', authRes.data.token)
                     const updateProfileRes = await api.patch(`/collections/users/records/${res.data.id}`, {
                         first_name: name,
                         last_name: surname,
@@ -75,7 +76,7 @@ export default function CreatePassword_page({ navigation, route }) {
                         >
                             Назад
                         </Text>
-                        
+
                     </Pressable>
                     <View
                         style={{

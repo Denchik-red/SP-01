@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as apiToken from '../util/apiToken.js';
+import * as apiItem from '../util/apiItem.js';
 // import { useNavigation } from '@react-navigation/native';
 
 
@@ -14,7 +14,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async (config) => {
-        const token = await apiToken.getToken();
+        const token = await apiItem.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
