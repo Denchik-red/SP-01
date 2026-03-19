@@ -20,7 +20,7 @@ const Tab = createBottomTabNavigator();
 
 function MainTab() {
     return (
-        <Tab.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30} }}>
+        <Tab.Navigator initialRouteName='Main' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30} }}>
             <Tab.Screen
                 name="Main"
                 component={Main_page}

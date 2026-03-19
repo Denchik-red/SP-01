@@ -7,17 +7,15 @@ export async function saveItem(key, value) {
     try {
         if (Platform.OS === "web") {
             Cookies.set(key, value)
-            console.log("Item saved securely!");
-            console.log(Cookies.get(key))
+            console.log(`${key} saved securely!`);
         } else {
             if (Platform.OS === "android") {
                 await SecureStore.setItemAsync(key, value);
-                console.log("Item saved securely!");
-                console.log(await SecureStore.getItemAsync(key))
+                console.log(`${key} saved securely!`);
             }
         }
     } catch (e) {
-        console.error("Error saving token:", e);
+        console.error(`Error saving ${key}:`, e);
     }
 
 
@@ -47,7 +45,7 @@ export async function getItem(key) {
             }
         }
     } catch (e) {
-        console.error("Error getting token:", e);
+        console.error(`Error getting ${key}:`, e);
         return null;
     }
 }

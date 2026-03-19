@@ -26,20 +26,15 @@ export default function Login_page({ navigation }) {
     }, []);
 
     const onLoginPressed = async () => {
-        console.log(email, password)
         if (emailValid && passwordValid) {
-            console.log("Login successful!");
-
             try {
                 const res = await api.post("/collections/users/auth-with-password", {
                     identity: email,
                     password: password,
                 })
-                console.log(res)
                 if (res.data?.token && res.data?.record.id) {
                     apiItem.saveItem('token', res.data.token)
                     apiItem.saveItem('userId', res.data.record.id)
-                    console.log('userId: ', res.data?.record.id)
                     navigation.navigate("InterAccessPassword")
                 }
             } catch (e) {

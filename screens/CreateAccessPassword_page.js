@@ -14,7 +14,6 @@ export default function CreateAccessPassword_page({ navigation }) {
     const [error, setError] = useState(false)
 
     const shakeAnim = useRef(new Animated.Value(0)).current;
-    console.log("shakeAnim: ", typeof(shakeAnim))
 
     useEffect(() => {
         if (error) {
@@ -32,9 +31,7 @@ export default function CreateAccessPassword_page({ navigation }) {
     useEffect(() => {
         if (code.length === 4) {
             const pin = code.join('');
-            console.log("Введенный пин-код:", pin);
             if (firstPassword == "") {
-                console.log("firstPassword ", firstPassword)
                 setFirstpassword(pin)
                 setCode([])
                 return

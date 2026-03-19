@@ -30,13 +30,11 @@ export default function CreatePassword_page({ navigation, route }) {
                     password: password,
                     passwordConfirm: confirmPassword
                 })
-                console.log(res)
 
                 const authRes = await api.post("/collections/users/auth-with-password", {
                     identity: email,
                     password: password,
                 })
-                console.log(authRes)
                 if (authRes.data?.token) {
                     apiItem.saveItem('userId', res.data.record.id)
                     apiItem.saveItem('token', authRes.data.token)
@@ -47,12 +45,10 @@ export default function CreatePassword_page({ navigation, route }) {
                         birthday: parceDate(birthdayDate),
                         gender: gender
                     })
-                    console.log(updateProfileRes.data)
                     navigation.navigate("CreateAccessPassword")
                 }
 
             } catch (error) {
-                console.log(error.response.data)
                 if (error.response.data.data.email.message == "Value must be unique.") {
                     setApiError("Пользователь с таким email уже существует.")
                 } else {

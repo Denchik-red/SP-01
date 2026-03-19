@@ -26,7 +26,6 @@ export default function CreateProfile_page({ navigation }) {
         'keyboardDidShow',
         (event) => {
             setKeyboardHeight(event.endCoordinates.height)
-            console.log(keyboardHeight)
 
         }
     )
@@ -41,7 +40,6 @@ export default function CreateProfile_page({ navigation }) {
 
 
     const onRegisterPressed = () => {
-        console.log(name, surname, patronymic, birthdayDate, gender, email)
         if (nameValid && surnameValid && birthdayDateValid && genderValid && emailValid) {
             console.log("Registration successful! Navigating to CreatePassword...")
             navigation.navigate("CreatePassword", {

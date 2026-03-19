@@ -2,7 +2,42 @@ import { TextInput, View, Pressable, Text, StyleSheet, Modal } from 'react-nativ
 import { useState } from 'react'
 import { Eye, EyeOff, ChevronDown } from 'lucide-react-native'
 import mainStyles from '../styles/mainStyle.js';
+import { Ionicons } from '@expo/vector-icons';
 
+export function SearchBar({setSearchText}) {
+    return (
+        <View style={serchStyles.container}>
+            <Ionicons name="search" size={20} color="#999" style={serchStyles.icon} />
+            <TextInput
+                style={serchStyles.input}
+                placeholder="Искать описания"
+                placeholderTextColor="#999"
+                onChangeText={setSearchText}
+            />
+        </View>
+    );
+}
+
+const serchStyles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#EBEBEB',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginHorizontal: 16,
+    },
+    icon: {
+        marginRight: 8,
+    },
+    input: {
+        flex: 1,
+        fontSize: 16,
+        color: '#333',
+        padding: 0,
+    },
+});
 
 
 export function PasswordInputCustom({ value, onChangeText, setIsPasswordValid, customError = "" }) {

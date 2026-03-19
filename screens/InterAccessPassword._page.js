@@ -33,9 +33,7 @@ export default function InterAccessPassword_page({ navigation }) {
         const checkPin = async () => {
             if (code.length === 4) {
                 const pin = code.join('');
-                console.log("Введенный пин-код:", pin);
                 if (Platform.OS == "android") {
-                    console.log(await SecureStore.getItemAsync("pin"))
                     if (pin === await SecureStore.getItemAsync("pin")) {
                         console.log("Pin is correct!")
                         setIsAuthorized(true)
