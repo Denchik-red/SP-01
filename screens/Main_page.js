@@ -2,7 +2,6 @@ import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList, 
 import { SearchBar } from '../components/TextInputCustom'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
-import * as apiItems from '../util/apiItem.js'
 import api from '../util/getApi.js'
 import mainStyle from '../styles/mainStyle.js'
 import ProductCard from '../components/ProductCard.js'
@@ -28,7 +27,6 @@ export default function Main_page() {
 
     function openItemInfoMenu(item) {
         setModalItemInfo(item)
-        console.log(item)
     }
 
     const LoadList = () => {
@@ -64,11 +62,6 @@ export default function Main_page() {
     }
 
     useEffect(() => {
-        console.log("Basket on front:", basket)
-
-    }, [basket])
-
-    useEffect(() => {
         const getProducts = async () => {
             const resProducts = await api.get(`/collections/products/records?page=1&perPage=30`)
             setProducts(resProducts.data.items)
@@ -81,8 +74,14 @@ export default function Main_page() {
             setIsStocksLoading(false)
             console.log("Stocks: ", resStocks.data)
         }
+        const getBasket = async () => {
+            const resBasket = await apiBasket.getBasket()
+            setBasket(resBasket.items)
+            console.log("Basket: ", resBasket.items)
+        }
         getProducts()
         getStocks()
+        getBasket()
     }, [])
 
     useEffect(() => {
@@ -94,7 +93,6 @@ export default function Main_page() {
                 return searchFilter && product.typeCloses == genderFilter
             }
         })
-        console.log('filteredProducts', filteredProducts)
         setFilteredProducts(filteredProducts)
     }, [serchText, genderFilter, products])
     return (
@@ -229,32 +227,39 @@ export default function Main_page() {
                         <TouchableOpacity
                             style={styles.button}
                             onPress={async () => {
-                                const basketInfo = await apiBasket.getBasket()
-                                setBasket((oldValue) => {
-                                    const elementAlreadyInBasket = oldValue.findIndex((item) => {
-                                        return item.id == modalItemInfo.id
-                                    })
-                                    if (elementAlreadyInBasket !== -1) {
-                                        return [
-                                            ...oldValue.slice(0, elementAlreadyInBasket),
-                                            {
-                                                ...oldValue[elementAlreadyInBasket],
-                                                quantity: oldValue[elementAlreadyInBasket].quantity + 1
-                                            },
-                                            ...oldValue.slice(elementAlreadyInBasket + 1)
-                                        ]
-                                    } else {
-                                        return [
-                                            ...oldValue,
-                                            {
-                                                ...modalItemInfo,
-                                                quantity: 1
-                                            }
-                                        ]
-                                    }
-                                })
-                            }}
+                                setIsProductsLoading(true);
+                                try {
+                                    const itemIndex = basket.findIndex(item => item.id === modalItemInfo.id);
+                                    let updatedBasket;
 
+                                    if (itemIndex !== -1) {
+                                        updatedBasket = basket.map((item, index) =>
+                                            index === itemIndex
+                                                ? { ...item, quantity: item.quantity + 1 }
+                                                : item
+                                        );
+                                    } else {
+                                        updatedBasket = [...basket, { ...modalItemInfo, quantity: 1 }];
+                                    }
+                                    setModalItemInfo(null);
+
+                                    // 2. Отправляем на сервер
+                                    const res = await apiBasket.updateBasket(updatedBasket);
+                                    
+                                    // 3. Если успех — обновляем локальный стейт
+                                    if (res.data) {
+                                        setBasket(updatedBasket);
+                                        // Alert.alert('Успешно', 'Товар добавлен в корзину');
+                                    }
+                                } catch (error) {
+                                    // 4. Если ошибка — стейт не изменился, данные не потеряны
+                                    console.error('Ошибка обновления корзины:', error);
+                                    // Alert.alert('Ошибка', 'Не удалось добавить товар');
+                                } finally {
+                                    console.log('updatedBasketfinnaly:', basket)
+                                    setIsProductsLoading(false);
+                                }
+                            }}
                         >
                             <Text style={mainStyle.buttonText} >Добавить за {modalItemInfo?.price} ₽</Text>
                         </TouchableOpacity>

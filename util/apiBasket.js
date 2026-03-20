@@ -32,3 +32,18 @@ export async function getBasket() {
         return newBasket
     }
 }
+
+export async function updateBasket(items) {
+    const basket = await getBasketFromServer()
+    if (basket) {
+        const res = await api.patch(`/collections/basket/records/${basket.id}`, {
+            items: items
+        })
+        console.log("Update basket", res.data)
+        return res
+    } else {
+        const newBasket = await createBasket(items)
+        console.log("New basket:", newBasket)
+        return newBasket
+    }
+}
