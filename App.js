@@ -11,16 +11,18 @@ import Profile_page from './screens/Profile_page';
 import Main_page from './screens/Main_page';
 import Catalog_page from './screens/Catalog_page';
 import Projects_page from './screens/Projects_page';
+import Basket_page from './screens/Basket_page';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Image } from 'react-native';
 
 
-const Stack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
+const MainStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function MainTab() {
+function MainTabNavigator() {
     return (
-        <Tab.Navigator initialRouteName='Catalog' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30} }}>
+        <Tab.Navigator initialRouteName='Catalog' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30 } }} >
             <Tab.Screen
                 name="Main"
                 component={Main_page}
@@ -102,25 +104,36 @@ function MainTab() {
                 }}
             />
         </Tab.Navigator>
+
     )
 }
 
-function AuthStack() {
+function MainStackNavigator() {
     return (
-        <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Profile" component={Profile_page} options={{ headerShown: true }} />
-            <Stack.Screen name="Login" component={Login_page} />
-            <Stack.Screen name="Registration" component={CreateProfile_page} />
-            <Stack.Screen name="CreatePassword" component={CreatePassword_page} />
-            <Stack.Screen
+        <MainStack.Navigator initialRouteName='Basket'>
+            <MainStack.Screen name="Main" component={MainTabNavigator} />
+            <MainStack.Screen name="Basket" component={Basket_page} />
+        </MainStack.Navigator>
+    )
+}
+
+
+function AuthStackNavigator() {
+    return (
+        <AuthStack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+            <AuthStack.Screen name="Profile" component={Profile_page} options={{ headerShown: true }} />
+            <AuthStack.Screen name="Login" component={Login_page} />
+            <AuthStack.Screen name="Registration" component={CreateProfile_page} />
+            <AuthStack.Screen name="CreatePassword" component={CreatePassword_page} />
+            <AuthStack.Screen
                 name="CreateAccessPassword"
                 component={CreateAccessPassword_page}
             />
-            <Stack.Screen
+            <AuthStack.Screen
                 name="InterAccessPassword"
                 component={InterAccessPassword_page}
             />
-        </Stack.Navigator>
+        </AuthStack.Navigator>
     )
 }
 
@@ -130,7 +143,7 @@ function AppNavigator() {
     const { isAuthorized, setIsAuthorized } = useAuth()
     return (
         <NavigationContainer>
-            {isAuthorized ? <MainTab /> : <AuthStack />}
+            {isAuthorized ? <MainStackNavigator /> : <AuthStackNavigator />}
         </NavigationContainer>
     )
 }

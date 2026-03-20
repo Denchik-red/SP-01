@@ -1,13 +1,35 @@
-import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList, Modal, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, ActivityIndicator, Pressable, FlatList, Modal, StyleSheet, TouchableOpacity } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native';
 import { SearchBar } from '../components/TextInputCustom'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import api from '../util/getApi.js'
 import mainStyle from '../styles/mainStyle.js'
 import ProductCard from '../components/ProductCard.js'
 import * as apiBasket from '../util/apiBasket.js'
 
-export default function Main_page() {
+export default function Catalog_page() {
+
+    useFocusEffect(
+        useCallback(() => {
+            const getProducts = async () => {
+                const resProducts = await api.get(`/collections/products/records?page=1&perPage=30`)
+                setProducts(resProducts.data.items)
+                setIsProductsLoading(false)
+                console.log("products: ", resProducts.data)
+            }
+            const getBasket = async () => {
+                const resBasket = await apiBasket.getBasket()
+                setBasket(resBasket.items)
+                console.log("Basket: ", resBasket.items)
+            }
+            getProducts()
+            getBasket()
+            return () => {
+                console.log('Экран потерял фокус');
+            };
+        }, [])
+    );
 
     const [serchText, setSerchText] = useState('')
     const [isProductsLoading, setIsProductsLoading] = useState(true)
@@ -58,23 +80,6 @@ export default function Main_page() {
             )
         }
     }
-
-    useEffect(() => {
-        const getProducts = async () => {
-            const resProducts = await api.get(`/collections/products/records?page=1&perPage=30`)
-            setProducts(resProducts.data.items)
-            setIsProductsLoading(false)
-            console.log("products: ", resProducts.data)
-        }
-        const getBasket = async () => {
-            const resBasket = await apiBasket.getBasket()
-            setBasket(resBasket.items)
-            console.log("Basket: ", resBasket.items)
-        }
-        getProducts()
-        getBasket()
-    }, [])
-
     useEffect(() => {
         const filteredProducts = products.filter((product) => {
             const searchFilter = (product.title.toLowerCase().includes(serchText.toLowerCase()) || product.description.toLowerCase().includes(serchText.toLowerCase()) || product.price.toString().toLowerCase().includes(serchText.toLowerCase()))
@@ -212,7 +217,7 @@ export default function Main_page() {
 
                                     // 2. Отправляем на сервер
                                     const res = await apiBasket.updateBasket(updatedBasket);
-                                    
+
                                     // 3. Если успех — обновляем локальный стейт
                                     if (res.data) {
                                         setBasket(updatedBasket);

@@ -1,7 +1,8 @@
 import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList, Modal, StyleSheet, TouchableOpacity } from 'react-native'
 import { SearchBar } from '../components/TextInputCustom'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useState, useEffect } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import { useState, useEffect, useCallback } from 'react'
 import api from '../util/getApi.js'
 import mainStyle from '../styles/mainStyle.js'
 import ProductCard from '../components/ProductCard.js'
@@ -61,28 +62,33 @@ export default function Main_page() {
         }
     }
 
-    useEffect(() => {
-        const getProducts = async () => {
-            const resProducts = await api.get(`/collections/products/records?page=1&perPage=30`)
-            setProducts(resProducts.data.items)
-            setIsProductsLoading(false)
-            console.log("products: ", resProducts.data)
-        }
-        const getStocks = async () => {
-            const resStocks = await api.get(`/collections/promotions_and_news/records?page=1&perPage=30`)
-            setStocks(resStocks.data.items.map((stock) => `http://2.nntc.nnov.ru:8900/api/files/${stock.collectionId}/${stock.id}/${stock.newsImage}`))
-            setIsStocksLoading(false)
-            console.log("Stocks: ", resStocks.data)
-        }
-        const getBasket = async () => {
-            const resBasket = await apiBasket.getBasket()
-            setBasket(resBasket.items)
-            console.log("Basket: ", resBasket.items)
-        }
-        getProducts()
-        getStocks()
-        getBasket()
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            const getProducts = async () => {
+                const resProducts = await api.get(`/collections/products/records?page=1&perPage=30`)
+                setProducts(resProducts.data.items)
+                setIsProductsLoading(false)
+                console.log("products: ", resProducts.data)
+            }
+            const getStocks = async () => {
+                const resStocks = await api.get(`/collections/promotions_and_news/records?page=1&perPage=30`)
+                setStocks(resStocks.data.items.map((stock) => `http://2.nntc.nnov.ru:8900/api/files/${stock.collectionId}/${stock.id}/${stock.newsImage}`))
+                setIsStocksLoading(false)
+                console.log("Stocks: ", resStocks.data)
+            }
+            const getBasket = async () => {
+                const resBasket = await apiBasket.getBasket()
+                setBasket(resBasket.items)
+                console.log("Basket: ", resBasket.items)
+            }
+            getProducts()
+            getStocks()
+            getBasket()
+            return () => {
+                console.log('Экран потерял фокус');
+            };
+        }, [])
+    );
 
     useEffect(() => {
         const filteredProducts = products.filter((product) => {
@@ -245,7 +251,7 @@ export default function Main_page() {
 
                                     // 2. Отправляем на сервер
                                     const res = await apiBasket.updateBasket(updatedBasket);
-                                    
+
                                     // 3. Если успех — обновляем локальный стейт
                                     if (res.data) {
                                         setBasket(updatedBasket);
