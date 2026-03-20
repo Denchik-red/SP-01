@@ -8,7 +8,7 @@ import mainStyle from '../styles/mainStyle.js'
 import ProductCard from '../components/ProductCard.js'
 import * as apiBasket from '../util/apiBasket.js'
 
-export default function Catalog_page() {
+export default function Catalog_page({ navigation }) {
 
     useFocusEffect(
         useCallback(() => {
@@ -75,7 +75,7 @@ export default function Catalog_page() {
                         )
                     }
                     }
-                    contentContainerStyle={{ minHeight: '100%' }}
+                    contentContainerStyle={{ minHeight: '100%', paddingBottom: basket.length == 0 ? 0 : 80 }}
                 />
             )
         }
@@ -92,7 +92,7 @@ export default function Catalog_page() {
         setFilteredProducts(filteredProducts)
     }, [serchText, genderFilter, products])
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, }}>
             <View style={{
                 margin: 10,
             }}>
@@ -172,6 +172,40 @@ export default function Catalog_page() {
                 </Pressable>
             </View>
             <LoadList />
+
+            <View style={{
+                display: basket.length == 0 ? 'none' : 'flex',
+                position: 'absolute',
+                bottom: 5,
+                width: "100%",
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Pressable
+                    onPress={() => {
+                        navigation.navigate("Basket")
+                    }}
+                    style={{
+                        backgroundColor: '#007BFF',
+                        paddingVertical: 20,
+                        paddingHorizontal: 30,
+                        borderRadius: 10,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 10,
+                        width: '90%',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Text style={{
+                        color: 'white',
+                        fontSize: 20,
+                        fontWeight: 'bold'
+                    }}>{`В корзину ${basket.reduce((totalCost, item) => totalCost + item.price * item.quantity, 0)} ₽`}</Text>
+                </Pressable>
+
+            </View>
+
             <Modal
                 animationType="slide"       // Анимация: 'slide', 'fade', 'none'
                 transparent={true}          // Делает фон прозрачным
@@ -238,7 +272,6 @@ export default function Catalog_page() {
                     </TouchableOpacity>
                 </TouchableOpacity>
             </Modal>
-
         </SafeAreaView >
     )
 }

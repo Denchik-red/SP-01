@@ -110,8 +110,8 @@ function MainTabNavigator() {
 
 function MainStackNavigator() {
     return (
-        <MainStack.Navigator initialRouteName='Basket'>
-            <MainStack.Screen name="Main" component={MainTabNavigator} />
+        <MainStack.Navigator initialRouteName='MainNav'>
+            <MainStack.Screen name="MainNav" component={MainTabNavigator} />
             <MainStack.Screen name="Basket" component={Basket_page} />
         </MainStack.Navigator>
     )
