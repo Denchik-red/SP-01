@@ -1,20 +1,21 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
 
-
-export default function ProductCard({ title, category, price, onAdd }) {
+export default function ProductCard({ title, category, price, onAdd, inBasket, countInBasket }) {
     return (
         <View style={styles.card}>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.category}>{category}</Text>
             <View style={styles.footer}>
                 <Text style={styles.price}>{price} ₽</Text>
-                <TouchableOpacity style={styles.button} onPress={onAdd}>
-                    <Text style={styles.buttonText}>Добавить</Text>
+                <TouchableOpacity style={{...styles.button, backgroundColor: inBasket ? '#ffffff' : '#2F80ED'}} onPress={onAdd}>
+                    <Text style={{...styles.buttonText, color: inBasket ? '#2F80ED' : '#fff'}}>{inBasket ? `В корзине ${countInBasket}` : 'Добавить'}</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     card: {
@@ -51,10 +52,12 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     button: {
-        backgroundColor: '#2F80ED',
+        backgroundColor:'#2F80ED',
         borderRadius: 12,
         paddingVertical: 10,
         paddingHorizontal: 20,
+        borderColor: '#2F80ED',
+        borderWidth: 1,
     },
     buttonText: {
         color: '#fff',

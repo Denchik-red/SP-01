@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList } from 'react-native'
+import { View, Text, ActivityIndicator, ScrollView, Image, Pressable, FlatList, Modal, StyleSheet, TouchableOpacity } from 'react-native'
 import { SearchBar } from '../components/TextInputCustom'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
@@ -6,7 +6,7 @@ import * as apiItems from '../util/apiItem.js'
 import api from '../util/getApi.js'
 import mainStyle from '../styles/mainStyle.js'
 import ProductCard from '../components/ProductCard.js'
-
+import * as apiBasket from '../util/apiBasket.js'
 
 export default function Main_page() {
 
@@ -19,10 +19,54 @@ export default function Main_page() {
     const [stocks, setStocks] = useState([])
     const [filteredProducts, setFilteredProducts] = useState([])
     const [products, setProducts] = useState([])
+    const [basket, setBasket] = useState([])
+    const [modalItemInfo, setModalItemInfo] = useState(null)
 
     function onChangeSerchText(newText) {
         setSerchText(newText)
     }
+
+    function openItemInfoMenu(item) {
+        setModalItemInfo(item)
+        console.log(item)
+    }
+
+    const LoadList = () => {
+        if (isProductsLoading) {
+            return <ActivityIndicator />
+        } else {
+            return (
+                <FlatList
+                    data={filteredProducts}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => {
+                        const itemIndexinbasket = basket.findIndex((basketItem) => {
+                            return item.id == basketItem.id
+                        })
+                        return (
+                            <ProductCard
+                                title={item.title}
+                                category={item.typeCloses}
+                                price={item.price}
+                                inBasket={
+                                    itemIndexinbasket !== -1
+                                }
+                                countInBasket={itemIndexinbasket !== -1 ? basket[itemIndexinbasket].quantity : 0}
+                                onAdd={() => openItemInfoMenu(item)}
+                            />
+                        )
+                    }
+                    }
+                    contentContainerStyle={{ minHeight: '100%' }}
+                />
+            )
+        }
+    }
+
+    useEffect(() => {
+        console.log("Basket on front:", basket)
+
+    }, [basket])
 
     useEffect(() => {
         const getProducts = async () => {
@@ -157,21 +201,148 @@ export default function Main_page() {
                     >Мужчинам</Text>
                 </Pressable>
             </View>
+            <LoadList />
+            <Modal
+                animationType="slide"       // Анимация: 'slide', 'fade', 'none'
+                transparent={true}          // Делает фон прозрачным
+                visible={modalItemInfo ? true : false}      // Управление видимостью
+                onRequestClose={() => {     // Обработка кнопки "Назад" на Android
+                    setModalItemInfo(null);
+                }}
+            >
+                {/* Контент модального окна */}
 
-            <FlatList
-                data={filteredProducts}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <ProductCard
-                        title={item.title}
-                        category={item.typeCloses}
-                        price={item.price}
-                        onAdd={() => { }}
-                    />
-                )}
-                contentContainerStyle={{ minHeight: '100%' }}
-            />
+                <TouchableOpacity
+                    style={styles.centeredView}
+                    activeOpacity={1}
+                    onPress={() => setModalItemInfo(null)}
+                >
+                    <TouchableOpacity style={styles.modalView} activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+                        <Text style={styles.title}>{modalItemInfo?.title}</Text>
+                        <Text style={styles.subtitle}>Описание</Text>
+                        <Text style={styles.description}>{modalItemInfo?.description}</Text>
 
-        </SafeAreaView>
+                        <View style={styles.spacer}></View>
+
+                        <Text style={styles.subtitle}>Примерный расход:</Text>
+                        <Text style={styles.description}>{modalItemInfo?.approximate_cost}</Text>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={async () => {
+                                const basketInfo = await apiBasket.getBasket()
+                                setBasket((oldValue) => {
+                                    const elementAlreadyInBasket = oldValue.findIndex((item) => {
+                                        return item.id == modalItemInfo.id
+                                    })
+                                    if (elementAlreadyInBasket !== -1) {
+                                        return [
+                                            ...oldValue.slice(0, elementAlreadyInBasket),
+                                            {
+                                                ...oldValue[elementAlreadyInBasket],
+                                                quantity: oldValue[elementAlreadyInBasket].quantity + 1
+                                            },
+                                            ...oldValue.slice(elementAlreadyInBasket + 1)
+                                        ]
+                                    } else {
+                                        return [
+                                            ...oldValue,
+                                            {
+                                                ...modalItemInfo,
+                                                quantity: 1
+                                            }
+                                        ]
+                                    }
+                                })
+                            }}
+
+                        >
+                            <Text style={mainStyle.buttonText} >Добавить за {modalItemInfo?.price} ₽</Text>
+                        </TouchableOpacity>
+                    </TouchableOpacity>
+                </TouchableOpacity>
+            </Modal>
+
+        </SafeAreaView >
     )
 }
+
+const styles = StyleSheet.create({
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+        // paddingHorizontal: 20,
+        textAlign: 'start',
+        marginBottom: 20,
+
+    },
+    subtitle: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'start',
+        marginBottom: 7,
+        // paddingHorizontal: 20,
+    },
+
+    spacer: {
+        flex: 1,
+        marginVertical: 20,
+        width: '100%',
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'end',
+        alignItems: 'end',
+        backgroundColor: '#F5FCFF',
+    },
+
+    centeredView: {
+        height: '100%',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+
+    // 2. Само белое окно
+    modalView: {
+        height: '70%',
+        width: '100%',
+        // margin: 20,
+        backgroundColor: 'white',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 35,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5, // Тень для Android
+    },
+
+    button: {
+        backgroundColor: '#2F80ED',
+        borderRadius: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        marginTop: 15,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 'auto'
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    description: {
+        fontSize: 16,
+        color: '#333',
+        marginBottom: 10,
+
+    }
+});

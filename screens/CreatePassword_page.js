@@ -36,7 +36,8 @@ export default function CreatePassword_page({ navigation, route }) {
                     password: password,
                 })
                 if (authRes.data?.token) {
-                    apiItem.saveItem('userId', res.data.record.id)
+                    console.log(res)
+                    apiItem.saveItem('userId', res.data.id)
                     apiItem.saveItem('token', authRes.data.token)
                     const updateProfileRes = await api.patch(`/collections/users/records/${res.data.id}`, {
                         first_name: name,
@@ -49,7 +50,8 @@ export default function CreatePassword_page({ navigation, route }) {
                 }
 
             } catch (error) {
-                if (error.response.data.data.email.message == "Value must be unique.") {
+                console.log(error)
+                if (error.response.data?.data?.email?.message == "Value must be unique.") {
                     setApiError("Пользователь с таким email уже существует.")
                 } else {
                     setApiError("Не удалось подключиться к серверу.")

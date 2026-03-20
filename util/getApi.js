@@ -14,6 +14,10 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        const userId = await apiItem.getItem('userId');
+        if (userId) {
+            config.params = { ...config.params, userId }   
+        }
         return config;
     },
     (error) => {

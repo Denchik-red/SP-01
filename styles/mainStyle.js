@@ -13,7 +13,7 @@ export default StyleSheet.create({
         color: '#333',
         marginBottom: 10,
         paddingHorizontal: 20,
-        textAlign: 'center',
+        textAlign: 'start',
     },
     subtitle: {
         fontSize: 16,

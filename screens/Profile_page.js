@@ -31,6 +31,8 @@ export default function Profile_page() {
                 const res = await api.get(`/collections/users/records/${userId}`)
                 setUserData(res.data)
                 setLoading(false)
+            } else {
+                onExitBtnPress()
             }
 
         }
