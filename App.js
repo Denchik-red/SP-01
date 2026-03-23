@@ -14,6 +14,7 @@ import Projects_page from './screens/Projects_page';
 import Basket_page from './screens/Basket_page';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Image } from 'react-native';
+import CreateProject_page from './screens/CreateProject_page';
 
 
 const AuthStack = createNativeStackNavigator();
@@ -22,7 +23,7 @@ const Tab = createBottomTabNavigator();
 
 function MainTabNavigator() {
     return (
-        <Tab.Navigator initialRouteName='Catalog' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 30 } }} >
+        <Tab.Navigator initialRouteName='Projects' screenOptions={{ headerShown: false, tabBarIconStyle: { width: 30, height: 25 } }} >
             <Tab.Screen
                 name="Main"
                 component={Main_page}
@@ -110,9 +111,10 @@ function MainTabNavigator() {
 
 function MainStackNavigator() {
     return (
-        <MainStack.Navigator initialRouteName='MainNav'>
+        <MainStack.Navigator initialRouteName='MainNav' screenOptions={{ headerShown: false }}>
             <MainStack.Screen name="MainNav" component={MainTabNavigator} />
             <MainStack.Screen name="Basket" component={Basket_page} />
+            <MainStack.Screen name="CreateProject" component={CreateProject_page} />
         </MainStack.Navigator>
     )
 }
